@@ -3,10 +3,25 @@ import { useNavigate } from 'react-router-dom';
 // import { userTypeMap } from '../people/usertypes';
 import { tableTypeMap } from '../people/tabletypes';
 import Table from '../components/Table';
+import "../Design/admin.css"
 
 const DashboardPage = ({ userType, onLogout }) => {
   const navigate = useNavigate();
   const [activePage, setActivePage] = useState('');
+   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
+  
+    function handleDragStart(e) {
+      setIsDragging(true);
+    }
+  
+    function handleDragEnd(e) {
+      setIsDragging(false);
+    }
+  
+    function handleToggleSidebar() {
+      setIsSidebarVisible(!isSidebarVisible);
+    }
  
 
   
@@ -43,15 +58,31 @@ const DashboardPage = ({ userType, onLogout }) => {
   return (
     <div>
       <div style={{ display: 'flex' }}>
-        <div style={{ flex: 1 }}>
-          <h3>Pages</h3>
-          <ul>
+        <div className="admin">
+              <div
+        className={`admin-sidebar${isSidebarVisible ? " visible" : ""}${
+          isDragging ? " dragging" : ""
+        }`}
+        draggable="true"
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        <button className="admin-sidebar-toggle" onClick={handleToggleSidebar}>
+          {isSidebarVisible ? "<<" : ">>"}
+        </button>
+        <h1>Admin Profile</h1>
+         <ul>
             {userType.pages.map((page) => (
               <li key={page} >
                 <button value={page} onClick={pageManager}>{page}</button>
               </li>
+              
             ))}
           </ul>
+            {/* <li className={selected === 'logout' ? 'active' : ''}> */}
+            {/* <div onClick={() => handleClick('logout')}> */}
+    
+        </div> 
         </div>
         <div style={{ flex: 3 }}>
           {renderPage(activePage)}</div>
@@ -79,3 +110,4 @@ const ProfileDropdown = ({ onLogout }) => {
 };
 
 export default DashboardPage;
+     

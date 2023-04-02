@@ -2,20 +2,23 @@ import React,{useEffect, useState} from 'react'
 import { fetchGetApi,updatetables } from '../api.js/conduct';
 import { Link } from 'react-router-dom';
 import "../Design/table.css";
-import "../Design/modal.css";
-import "../Design/button.css"
 
 const Table = (props) => {
   const [heads, setHeads] = useState([]);
   const [tableBody, setTableBody] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isDeactivated,setIsDeactivated]=useState(false);
   const isButtonDisabled = selectedRow === null;
-  
+  const buttonStyle = {
+    backgroundColor: 'blue',
+    color: 'white',
+    padding: '10px 20px',
+    border: 'none',
+    borderRadius: '4px',
+    marginRight: '10px',
+  };
 
-const fetchTableData = async (endpoint) => {
+  const fetchTableData = async (endpoint) => {
     const data = await fetchGetApi(`https://automatic-reporting-system.onrender.com/api/${endpoint}`);
     setTableBody(data);
     setSelectedRow(null);
@@ -32,18 +35,8 @@ const fetchTableData = async (endpoint) => {
   const handleDeactivate = async (id, endpoint, key) => {
     const BODY = {};
     BODY[key] = id;
-  const response=  await updatetables("https://automatic-reporting-system.onrender.com/api/"+endpoint, BODY);
-  console.log("resssssssssss",response)
-  if (response.status===200) {
-      // Deactivation was successful
-      setIsDeactivated(!isDeactivated);
-    } else {
-      // Deactivation failed
-      console.error('Deactivation failed:', response.statusText);
-    }
+    await updatetables(`https://automatic-reporting-system.onrender.com/api/${endpoint}`, BODY)
     setIsModalOpen(false);
-    setSelectedRow(null);
-    setIsDeleting(false);
   }
 
   useEffect(() => { 
@@ -51,14 +44,13 @@ const fetchTableData = async (endpoint) => {
       setHeads(props.tableHollow.tableHeads);
       fetchTableData(props.tableHollow.endpoint)
     }
-  }, [props.tableHollow,isDeactivated]);
+  }, [props.tableHollow]);
 
   return (
-    <div style={{marginLeft:'100px',marginRight:'100px'}}>
+    <div>
       <table className='systemmaster-table'>
         <thead className='systemmaster-thead'>
           <tr className='systemmaster-tr'>
-            <th className='systemmaster-th' key={'Sr No.'}>Sr No.</th>
             {heads.map((heading) => (
               <th className='systemmaster-th' key={heading}>{heading}</th>
             ))}
@@ -76,7 +68,6 @@ const fetchTableData = async (endpoint) => {
               className='systemmaster-tr'
               key={index}
             >
-              <td style={{ border: "solid 1px black" }}>{index+1}</td>
               {props.tableHollow.displayFields.map((cell, index) => (
                 <td style={{ border: "solid 1px black" }} key={index}>{field[cell]}</td>
               ))}
@@ -85,30 +76,25 @@ const fetchTableData = async (endpoint) => {
         </tbody>
       </table>
       <div style={{ display: "flex", justifyContent: "end" }}>
-        <button className={selectedRow ? "edit":"edited"} disabled={isButtonDisabled}>Edit</button>
-        <button className={selectedRow ? "delete":"deleted"} disabled={isButtonDisabled} onClick={() => setIsModalOpen(true)}>Delete</button>
+        <button style={buttonStyle} disabled={isButtonDisabled}>Edit</button>
+        <button style={buttonStyle} disabled={isButtonDisabled} onClick={() => setIsModalOpen(true)}>Delete</button>
       </div>
       <div style={{ display: "flex", justifyContent: "end" }}>
-        <Link to="/test11"><button className='adduser'>Add User</button></Link>
+        <Link to="/admin/usercreation"><button style={buttonStyle}>Add User</button></Link>
       </div>
 
-  {isModalOpen && (
-  <div className="modal-container" onClick={() => setIsModalOpen(false)}>
-    <div className={`modal-content ${isDeleting ? 'deleting' : ''}`} onClick={(e) => e.stopPropagation()}>
+      {isModalOpen && (
+  <div className="modal-container">
+    <div className="modal-content">
       <h2>Are you sure you want to delete this row?</h2>
-      <div style={{ display: "flex", justifyContent: "space-around" }}>
-        <button  style={{backgroundColor:"blue"}} onClick={() => setIsModalOpen(false)}>Cancel</button>
-        <button className='delete' onClick={() => {
-          setIsDeleting(true);
-          handleDeactivate(selectedRow,props.tableHollow.deleteendpoint,props.tableHollow.displayFields[0]);
-        }} disabled={isDeleting}>{isDeleting ? 'Deleting...' : 'Delete'}</button>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <button onClick={() => setIsModalOpen(false)} style={{ marginRight: "10px" }}>Cancel</button>
+        <button onClick={() => handleDeactivate(selectedRow,props.tableHollow.deleteendpoint,props.tableHollow.displayFields[0])}>Confirm</button>
       </div>
-      <p className="delete-msg">This action cannot be undone.</p>
-      <p className="deleting-msg">Deleting...</p>
     </div>
   </div>
-  )}
-</div>
+)}
+    </div>
 )};
 
-export default Table;
+    export default Table

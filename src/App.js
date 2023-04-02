@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route} from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import DashBoardPage from './pages/DashBoardPage';
 import { userTypeMap } from './people/usertypes';
+import Creation from './components/input';
 import Default from './pages/Default';
 
 
@@ -21,9 +22,10 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-      <Route path="/" element={<Default />} />
-      <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
-      <Route path="/dashboard" element={<DashBoardPage userType={userType} onLogout={handleLogout} />}/>
+        <Route path="/" element={<Default />} />
+        <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+        <Route path="/dashboard" element={<DashBoardPage userType={userType} onLogout={handleLogout} />} />
+        <Route path="/test11" element={<Creation onLogout={handleLogout} />} />
       </Routes>
     </BrowserRouter>
   );
