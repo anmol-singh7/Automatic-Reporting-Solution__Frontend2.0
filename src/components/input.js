@@ -1,24 +1,16 @@
 import React, { useState } from "react";
 import { fetchPostApi } from '../api.js/conduct';
 import { inputdata } from "../people/tabletypes";
+import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import "../Design/user.css"
 
 const Creation = () => {
     const URL = process.env.REACT_APP_URL;
 
     const [values, setValues] = useState(inputdata["user"].fields);
-    const sele="User";
-
-  
-
-    // const handleSelectChange = (e) => {
-    //     const { value } = e.target;
-    //     setValues({
-    //         ...values,
-    //         usertype: value,
-    //     });
-    //     console.log(values);
-    // };
-
+    const { state } = useLocation();
+    
     const changeHandler = (e) => {
         const { name, value } = e.target;
         console.log(name,value,values);
@@ -36,6 +28,9 @@ const Creation = () => {
         event.preventDefault();
         console.log(endpoint, Body);
          const response = await fetchPostApi("https://automatic-reporting-system.onrender.com/api/"+endpoint,Body);
+        //  if(response.status===200){
+
+        //  }
         console.log("handlesubmit",response);
     }
 
@@ -43,11 +38,11 @@ const Creation = () => {
     return (
         <div className="usercreation-div">
             <label>
-                <h1 className="usercreation-h1">{`Create New ${sele}`}</h1>
+                <h1 className="usercreation-h1">{`Create New ${state}`}</h1>
             </label>
             <div className="formcenter">
-                <form className="usercreation-form" onSubmit={(e) => handleSubmit(e, inputdata["user"].endpoint, values)}>
-                    {inputdata["user"].fieldnames.map((name,index)=> name[3]==="input" ?
+                <form className="usercreation-form" onSubmit={(e) => handleSubmit(e, inputdata[state].endpoint, values)}>
+                    {inputdata[state].fieldnames.map((name,index)=> name[3]==="input" ?
                     <div className="usercreation-div2">
 
                         <label className="usercreation-label-2">{name[0]}</label>
@@ -77,19 +72,19 @@ const Creation = () => {
                             <option value="" disabled >
                                 Select an option
                             </option>
-                            <option key={1}>a</option>
-                            <option key={2}>b</option>
-                            <option key={3}>c</option>
-                            <option key={4}>d</option>
+                            {/* <option key={1}>Admin</option> */}
+                            <option key={2}>Creator</option>
+                            <option key={3}>Checker</option>
+                            <option key={4}>Approver</option>
 
                         </select>
 
 )};
                     <div>
-                        <button className="usercreation-button" type="submit">
-                            Back                 </button>
+                        <Link to={inputdata[state].backpoint}> <button className="usercreation-button" type="submit">
+                            Back                 </button></Link>
 
-                        <button   type="submit">
+                        <button className="usercreation-button" >
                             enter
                         </button>
                         {/* <button type="button" onClick={(()=>console.log(values))}> </button> */}
